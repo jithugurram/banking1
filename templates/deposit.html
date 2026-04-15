@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deposit - Jithu Bank</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='banking.css') }}">
+  <style>
+    /* General Styling */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    /* Container */
+    .container {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      border-radius: 15px;
+      padding: 30px 40px;
+      width: 380px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    /* Heading */
+    .container h2 {
+      font-size: 26px;
+      color: #FFD700;
+      margin-bottom: 10px;
+    }
+
+    .container p {
+      font-size: 14px;
+      margin-bottom: 20px;
+      color: #ddd;
+    }
+
+    /* Flash messages */
+    .flash {
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    .flash.success {
+      background: rgba(0, 255, 0, 0.2);
+      color: #0f0;
+      border: 1px solid #0f0;
+    }
+    .flash.error {
+      background: rgba(255, 0, 0, 0.2);
+      color: #f00;
+      border: 1px solid #f00;
+    }
+
+    /* Form */
+    .container form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .container input[type="number"],
+    .container input[type="password"],
+    .container input[type="text"] {
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      font-size: 16px;
+      text-align: center;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      transition: 0.3s ease;
+    }
+
+    .container input:focus {
+      background: rgba(255,255,255,0.2);
+      border: 1px solid #FFD700;
+    }
+
+    /* Button */
+    .container button {
+      background: linear-gradient(90deg, #FFD700, #FF8C00);
+      color: #000;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      transition: 0.3s ease;
+    }
+
+    .container button:hover {
+      background: linear-gradient(90deg, #FF8C00, #FFD700);
+      transform: scale(1.05);
+    }
+
+    /* Back Link */
+    .back-link {
+      display: inline-block;
+      margin-top: 20px;
+      color: #FFD700;
+      text-decoration: none;
+      font-size: 14px;
+      transition: 0.3s ease;
+    }
+
+    .back-link:hover {
+      color: #FF8C00;
+    }
+
+    /* Fade-in animation */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive */
+    @media (max-width: 420px) {
+      .container {
+        width: 90%;
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>💰 Deposit Money</h2>
+    <p>Welcome, <strong>{{ user.username }}</strong> <br> Current Balance: ₹{{ "%.2f"|format(user.balance) }}</p>
+
+    <!-- Flash message display -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+      <!-- Deposit Amount -->
+      <input type="number" name="amount" placeholder="Enter amount (₹)" min="1" required>
+
+      <!-- Payment Note -->
+      <input type="text" name="note" placeholder="Payment note (optional)">
+
+      <!-- Transaction PIN -->
+      <input type="password" name="pin" placeholder="Enter your PIN" required>
+
+      <!-- Submit Button -->
+      <button type="submit">💸 Deposit</button>
+    </form>
+
+    <a href="{{ url_for('dashboard') }}" class="back-link">⬅ Back to Dashboard</a>
+  </div>
+</body>
+</html>

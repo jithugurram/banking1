@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jithu Bank | Dashboard v1</title>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:Poppins,Arial,sans-serif;
+  background:#0c0f1d;
+  color:#fff;
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+header{
+  background:#000;
+  padding:15px 30px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow:0 4px 10px rgba(0,0,0,.6);
+}
+header h1{color:#FFD700}
+nav a{
+  margin-right:15px;
+  color:#FFD700;
+  text-decoration:none;
+  font-weight:600;
+}
+nav a:hover{color:#FF8C00}
+
+button,input,select{
+  padding:8px;
+  border-radius:6px;
+  border:none;
+  width:100%;
+  margin-top:5px;
+}
+button{
+  background:#FFD700;
+  font-weight:bold;
+  cursor:pointer;
+}
+button:hover{background:#FF8C00}
+
+.dashboard{
+  padding:20px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:20px;
+  overflow-y:auto;
+}
+
+.card{
+  background:rgba(255,255,255,0.05);
+  padding:15px;
+  border-radius:12px;
+}
+.balance{
+  background:linear-gradient(135deg,#FFD700,#FF8C00);
+  color:#000;
+  font-size:20px;
+  font-weight:bold;
+  text-align:center;
+}
+h3{color:#FFD700;margin-bottom:10px}
+
+.progress-bar{
+  background:#444;
+  height:12px;
+  border-radius:8px;
+  overflow:hidden;
+}
+.progress-fill{
+  background:#FFD700;
+  height:100%;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+th,td{
+  padding:8px;
+  border-bottom:1px solid rgba(255,255,255,.2);
+}
+
+.light{
+  background:#f5f5f5;
+  color:#000;
+}
+.light .card{background:#fff;color:#000}
+.light header{background:#fff;color:#000}
+.light footer{background:#fff;color:#000}
+
+footer{
+  text-align:center;
+  padding:10px;
+  background:#000;
+  color:#aaa;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🏦 Jithu Bank</h1>
+  <nav>
+    <a href="#">Deposit</a>
+    <a href="#">Withdraw</a>
+    <a href="#">Transfer</a>
+    <a href="#">Transactions</a>
+  </nav>
+  <div>
+    <span id="clock"></span>
+    <button onclick="toggleTheme()">🌗</button>
+    <button onclick="logout()">Logout</button>
+  </div>
+</header>
+
+<div class="dashboard">
+
+<!-- Balance -->
+<div class="card balance">Current Balance: ₹2,50,000.00</div>
+
+<!-- Profile -->
+<div class="card">
+<h3>👤 Account Profile</h3>
+<p>Name: Jithendra</p>
+<p>Account Type: Savings</p>
+<p>KYC: ✅ Verified</p>
+<p>Branch: Hyderabad</p>
+</div>
+
+<!-- Rewards -->
+<div class="card">
+<h3>🏆 Rewards</h3>
+<p>Points: 1200</p>
+<div class="progress-bar">
+  <div class="progress-fill" style="width:60%"></div>
+</div>
+<p>Next reward at 2000</p>
+</div>
+
+<!-- Monthly Budget -->
+<div class="card">
+<h3>📉 Monthly Budget</h3>
+<p>Limit: ₹50,000</p>
+<p>Spent: ₹38,500</p>
+<div class="progress-bar">
+  <div class="progress-fill" style="width:77%;background:#FF4500"></div>
+</div>
+<p>Remaining: ₹11,500</p>
+</div>
+
+<!-- Income vs Expense -->
+<div class="card">
+<h3>📊 Income vs Expense</h3>
+<canvas id="incomeChart"></canvas>
+</div>
+
+<!-- Net Worth -->
+<div class="card">
+<h3>💼 Net Worth</h3>
+<canvas id="netChart"></canvas>
+</div>
+
+<!-- Spending Category -->
+<div class="card">
+<h3>📊 Spending by Category</h3>
+<canvas id="categoryChart"></canvas>
+</div>
+
+<!-- Quick Transfer -->
+<div class="card">
+<h3>💸 Quick Transfer</h3>
+<input id="qt-name" placeholder="Recipient">
+<input id="qt-amt" type="number" placeholder="Amount">
+<button onclick="quickTransfer()">Send</button>
+<p id="qt-msg"></p>
+</div>
+
+<!-- EMI Calculator -->
+<div class="card">
+<h3>🏦 EMI Calculator</h3>
+<input id="loan" type="number" placeholder="Loan Amount">
+<input id="rate" type="number" placeholder="Interest %">
+<input id="months" type="number" placeholder="Months">
+<button onclick="emi()">Calculate</button>
+<p id="emi-result"></p>
+</div>
+
+<!-- Currency Converter -->
+<div class="card">
+<h3>🌍 Currency Converter</h3>
+<input id="curAmt" type="number" placeholder="Amount">
+<select id="cur">
+<option>USD</option>
+<option>EUR</option>
+<option>GBP</option>
+</select>
+<button onclick="convert()">Convert</button>
+<p id="cur-result"></p>
+</div>
+
+<!-- Bank Transfer -->
+<div class="card">
+<h3>🏦 Bank Transfer</h3>
+<select id="mode">
+<option>IMPS</option>
+<option>NEFT</option>
+<option>RTGS</option>
+</select>
+<input id="name" placeholder="Beneficiary">
+<input id="amount" type="number" placeholder="Amount">
+<button onclick="transfer()">Transfer</button>
+<p id="msg"></p>
+</div>
+
+<!-- Search -->
+<div class="card">
+<h3>🔍 Search Transactions</h3>
+<input onkeyup="searchTx(this.value)" placeholder="Search...">
+</div>
+
+<!-- History -->
+<div class="card" style="grid-column:1/-1">
+<h3>📜 Transfer History</h3>
+<table>
+<thead>
+<tr>
+<th>Date</th><th>Mode</th><th>Name</th><th>Amount</th><th>Status</th><th>Ref</th>
+</tr>
+</thead>
+<tbody id="history"></tbody>
+</table>
+<button onclick="exportCSV()">📤 Export CSV</button>
+<button onclick="downloadPDF()">📥 Receipt PDF</button>
+</div>
+
+</div>
+
+<footer>© 2025 Jithu Bank – Dashboard v1</footer>
+
+<script>
+let lastTx=null;
+
+/* Clock */
+setInterval(()=>clock.innerText=new Date().toLocaleString(),1000);
+
+/* Theme */
+function toggleTheme(){document.body.classList.toggle("light");}
+
+/* Logout */
+function logout(){alert("Logged out");}
+
+/* Charts */
+new Chart(incomeChart,{type:"line",data:{
+labels:["Jan","Feb","Mar","Apr","May"],
+datasets:[
+{label:"Income",data:[12000,15000,14000,16000,18000],borderColor:"#00FF7F"},
+{label:"Expense",data:[8000,9000,10000,11000,12000],borderColor:"#FF4500"}
+]}});
+
+new Chart(netChart,{type:"doughnut",data:{
+labels:["Assets","Liabilities"],
+datasets:[{data:[500000,150000],backgroundColor:["#FFD700","#FF4500"]}]
+}});
+
+new Chart(categoryChart,{type:"pie",data:{
+labels:["Food","Travel","Shopping","Bills"],
+datasets:[{data:[12000,8000,6000,10000],
+backgroundColor:["#FFD700","#FF8C00","#FF4500","#00FF7F"]}]
+}});
+
+/* Features */
+function quickTransfer(){
+qt-msg.innerText=`₹${qt-amt.value} sent to ${qt-name.value}`;
+}
+
+function emi(){
+let P=loan.value,R=rate.value/12/100,N=months.value;
+let E=(P*R*Math.pow(1+R,N))/(Math.pow(1+R,N)-1);
+emi-result.innerText=`EMI: ₹${E.toFixed(2)}`;
+}
+
+function convert(){
+let r={USD:0.012,EUR:0.011,GBP:0.009};
+cur-result.innerText=`${cur.value} ${(curAmt.value*r[cur.value]).toFixed(2)}`;
+}
+
+function transfer(){
+let ref="TXN"+Date.now();
+let d=new Date().toLocaleString();
+lastTx={ref,name:name.value,amt:amount.value,date:d};
+history.innerHTML+=`
+<tr><td>${d}</td><td>${mode.value}</td><td>${name.value}</td>
+<td>₹${amount.value}</td><td style="color:#0f0">SUCCESS</td><td>${ref}</td></tr>`;
+msg.innerText="✅ Transfer Successful";
+}
+
+/* Search */
+function searchTx(v){
+v=v.toLowerCase();
+document.querySelectorAll("#history tr").forEach(r=>{
+r.style.display=r.innerText.toLowerCase().includes(v)?"":"none";
+});
+}
+
+/* CSV */
+function exportCSV(){
+let csv="Date,Mode,Name,Amount,Status,Ref\n";
+document.querySelectorAll("#history tr").forEach(r=>{
+csv+=[...r.children].map(td=>td.innerText).join(",")+"\n";
+});
+let b=new Blob([csv],{type:"text/csv"});
+let a=document.createElement("a");
+a.href=URL.createObjectURL(b);
+a.download="statement.csv";
+a.click();
+}
+
+/* PDF */
+function downloadPDF(){
+if(!lastTx)return alert("No transaction");
+const {jsPDF}=window.jspdf;
+let p=new jsPDF();
+p.text("Jithu Bank Receipt",20,20);
+p.text(`Ref: ${lastTx.ref}`,20,40);
+p.text(`Amount: ₹${lastTx.amt}`,20,50);
+p.text("Status: SUCCESS",20,60);
+p.save("receipt.pdf");
+}
+
+/* Auto logout */
+let idle=0;
+setInterval(()=>{
+idle++;
+if(idle>=10){alert("Session expired");logout();}
+},60000);
+document.onmousemove=document.onkeypress=()=>idle=0;
+</script>
+
+</body>
+</html>

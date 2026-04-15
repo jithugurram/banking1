@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Withdraw - Jithu Bank</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='banking.css') }}">
+</head>
+<body>
+<div class="container">
+    <header>
+        <h2>Withdraw Money</h2>
+        <p>Welcome, <strong>{{ user.username }}</strong> | Balance: ₹{{ "%.2f"|format(user.balance) }}</p>
+    </header>
+
+    <!-- Flash Messages Section -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Withdrawal Form -->
+    <form method="post" class="form-box">
+        <label for="amount">Withdrawal Amount</label>
+        <input type="number" id="amount" name="amount" placeholder="Enter amount" required min="1">
+
+        <label for="pin">Transaction PIN</label>
+        <input type="password" id="pin" name="pin" placeholder="Enter your PIN" required>
+
+        <button type="submit" class="btn">Withdraw</button>
+    </form>
+
+    <div class="links">
+        <a href="{{ url_for('dashboard') }}" class="back-link">⬅ Back to Dashboard</a>
+        <a href="{{ url_for('transactions') }}" class="view-transactions">💰 View Transactions</a>
+    </div>
+</div>
+</body>
+</html>

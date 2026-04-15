@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup - Jithu Bank</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Full-page background */
+        body.signup-body {
+            background: url('{{ url_for("static", filename="images/signup-bg.jpg") }}') no-repeat center center/cover;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            color: #fff;
+        }
+
+        /* Dark overlay */
+        body.signup-body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1;
+        }
+
+        /* Signup box */
+        .signup-box {
+            position: relative;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 15px;
+            width: 350px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+        }
+
+        .signup-box h2 {
+            margin-bottom: 20px;
+            font-size: 28px;
+            color: #FFD700;
+        }
+
+        /* Inputs */
+        .signup-box input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        /* Button */
+        .signup-box button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(90deg, #FFD700, #FF8C00);
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #000;
+            cursor: pointer;
+            transition: 0.3s ease-in-out;
+        }
+
+        .signup-box button:hover {
+            background: linear-gradient(90deg, #FF8C00, #FFD700);
+            transform: scale(1.05);
+        }
+
+        /* Link */
+        .signup-box p {
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .signup-box a {
+            color: #FFD700;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .signup-box a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body class="signup-body">
+    <div class="signup-box">
+        <h2>Create Your Account</h2>
+        <form method="POST">
+            <input type="text" name="username" placeholder="Enter Username" required>
+            <input type="email" name="email" placeholder="Enter Email" required>
+            <input type="password" name="password" placeholder="Enter Password" required>
+            
+            <!-- ✅ Added Transaction PIN Field -->
+            <input type="password" 
+                   name="pin" 
+                   placeholder="Enter 4-digit Transaction PIN" 
+                   maxlength="4" 
+                   pattern="[0-9]{4}" 
+                   title="Enter a 4-digit numeric PIN" 
+                   required>
+
+            <button type="submit">Signup</button>
+        </form>
+        <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+    </div>
+</body>
+</html>
