@@ -30,6 +30,12 @@ pipeline {
                 sh "trivy fs . > trivy.txt" 
             }
         }
+
+            stage("push to s3") {
+                steps {
+                    sh "aws s3 cp trivy.txt s3://banking-testforme"
+                }
+            }
     }
 
     post {
