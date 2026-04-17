@@ -26,11 +26,12 @@ pipeline {
         }
     }
 
-        stage("Trivy"){
+        stage ("trivy scanning") {
             steps {
-                sh 'trivy fs . > trivy.txt' 
+                sh "trivy fs . > trivy.txt" 
             }
         }
+
     post {
     always {
         emailext attachLog: true,
