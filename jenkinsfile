@@ -7,13 +7,6 @@ pipeline {
                 cleanWs()
             }
         }
-        stage ("Git Checkout") {
-            steps {
-                git 'https://github.com/jithugurram/banking1.git'
-
-               
-            }
-        }
 
         stage ("Trivy File Scan") {
             steps {
