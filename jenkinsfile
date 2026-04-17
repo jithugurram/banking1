@@ -33,6 +33,10 @@ pipeline {
 
             stage("push to s3") {
                 steps {
+		        withCredentials([[
+            $class: 'AmazonWebServicesCredentialsBinding',
+            credentialsId: 'banking'
+        ]]) {
                     sh "aws s3 cp trivy.txt s3://banking-testforme"
                 }
             }
