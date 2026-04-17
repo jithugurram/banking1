@@ -24,13 +24,13 @@ pipeline {
                 sh 'docker run -d --name banking1 -p 3000:3000 jithendragurram/banking1:latest'
             }
         }
-    }
 
-        stage ("trivy scanning") {
+                stage ("trivy scanning") {
             steps {
                 sh "trivy fs . > trivy.txt" 
             }
         }
+    }
 
     post {
     always {
