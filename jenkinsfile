@@ -9,7 +9,7 @@ pipeline {
         }
         stage ("Git Checkout") {
             steps {
-                git 'https://github.com/jithugurram/banking.git'
+                git 'https://github.com/jithugurram/banking1.git'
 
                
             }
