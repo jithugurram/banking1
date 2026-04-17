@@ -9,7 +9,7 @@ pipeline {
         }
         stage ("Git Checkout") {
             steps {
-                git 'https://github.com/jithugurram/test-bank.git'
+                git 'https://github.com/jithugurram/banking.git'
 
                
             }
@@ -22,15 +22,15 @@ pipeline {
         }
         stage ("Build Docker Image") {
             steps {
-                sh "docker build -t bank ."
+                sh "docker build -t banking1 ."
             }
         }
         stage ("Tag & Push to DockerHub") {
             steps {
                 script {
                     withDockerRegistry(credentialsId: 'docker') {
-                        sh "docker tag bank jithendragurram/bank:latest "
-                        sh "docker push jithendragurram/bank:latest "
+                        sh "docker tag bank jithendragurram/banking1:latest "
+                        sh "docker push jithendragurram/banking1:latest "
                     }
                 }
             }
@@ -38,7 +38,7 @@ pipeline {
 
         stage ("Deploy to Container") {
             steps {
-                sh 'docker run -d --name bank -p 3000:3000 jithendragurram/bank:latest'
+                sh 'docker run -d --name bank -p 3000:3000 jithendragurram/banking1:latest'
             }
         }
     }
