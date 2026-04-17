@@ -40,6 +40,7 @@ pipeline {
                     sh "aws s3 cp trivy.txt s3://banking-testforme"
                 }
             }
+	 }
     }
 
     post {
