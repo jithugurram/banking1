@@ -1,19 +1,36 @@
 pipeline {
-    agent any
+agent any
 
     stages {
+        stage ("clean workspace") {
+            steps {
+                cleanWs()
+            }
+        }
+        stage ("Git Checkout") {
+            steps {
+                git 'https://github.com/jithugurram/test-bank.git'
 
+               
+            }
+        }
+
+        stage ("Trivy File Scan") {
+            steps {
+                sh "trivy fs . > trivy.txt"
+            }
+        }
         stage ("Build Docker Image") {
             steps {
-                sh "docker build -t banking1 ."
+                sh "docker build -t bank ."
             }
         }
         stage ("Tag & Push to DockerHub") {
             steps {
                 script {
                     withDockerRegistry(credentialsId: 'docker') {
-                        sh "docker tag banking1 jithendragurram/banking1:latest "
-                        sh "docker push jithendragurram/banking1:latest "
+                        sh "docker tag bank jithendragurram/bank:latest "
+                        sh "docker push jithendragurram/bank:latest "
                     }
                 }
             }
@@ -21,28 +38,10 @@ pipeline {
 
         stage ("Deploy to Container") {
             steps {
-                sh 'docker run -d --name banking1 -p 3000:3000 jithendragurram/banking1:latest'
+                sh 'docker run -d --name bank -p 3000:3000 jithendragurram/bank:latest'
             }
         }
-
-                stage ("trivy scanning") {
-            steps {
-                sh "trivy fs . > trivy.txt" 
-            }
-        }
-
-            stage("push to s3") {
-                steps {
-		        withCredentials([[
-            $class: 'AmazonWebServicesCredentialsBinding',
-            credentialsId: 'banking'
-        ]]) {
-                    sh "aws s3 cp trivy.txt s3://banking-testforme"
-                }
-            }
-	 }
     }
-
     post {
     always {
         emailext attachLog: true,
