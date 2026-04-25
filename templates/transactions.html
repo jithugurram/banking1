@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transactions - Jithu Bank</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,Arial,sans-serif}
+
+body{
+  background:#0c0f1d;
+  color:#fff;
+  display:flex;
+  flex-direction:column;
+  min-height:100vh;
+}
+
+/* Header */
+header{
+  background:#000;
+  padding:15px 30px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+header h1{color:#FFD700}
+
+nav a{
+  margin-left:15px;
+  color:#FFD700;
+  text-decoration:none;
+  font-weight:600;
+}
+
+/* Container */
+.container{
+  flex:1;
+  padding:30px;
+  display:flex;
+  justify-content:center;
+}
+
+/* Table */
+table{
+  width:90%;
+  border-collapse:collapse;
+  background:rgba(255,255,255,0.05);
+  border-radius:12px;
+  overflow:hidden;
+}
+
+th,td{
+  padding:12px;
+  text-align:center;
+  border-bottom:1px solid rgba(255,255,255,0.2);
+}
+
+th{
+  background:rgba(255,255,255,0.1);
+  color:#FFD700;
+}
+
+/* Footer */
+footer{
+  text-align:center;
+  padding:10px;
+  background:#000;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🏦 Jithu Bank</h1>
+  <nav>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/deposit">Deposit</a>
+    <a href="/withdraw">Withdraw</a>
+    <a href="/transfer">Transfer</a>
+    <a href="/logout">Logout</a>
+  </nav>
+</header>
+
+<div class="container">
+
+<table>
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Type</th>
+      <th>Amount</th>
+      <th>Balance After</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for txn in transactions %}
+    <tr>
+      <td>{{ txn.created_at }}</td>
+      <td>{{ txn.type }}</td>
+      <td>₹{{ txn.amount }}</td>
+      <td>₹{{ txn.balance_after }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+
+</table>
+
+</div>
+
+<footer>
+  © 2025 Jithu Bank
+</footer>
+
+</body>
+</html>

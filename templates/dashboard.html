@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jithu Bank | Dashboard</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,Arial}
+body{background:#0c0f1d;color:#fff}
+
+header{
+  background:#000;padding:15px 30px;
+  display:flex;justify-content:space-between;align-items:center
+}
+header h1{color:#FFD700}
+
+nav a{margin-right:15px;color:#FFD700;text-decoration:none;font-weight:600}
+
+.dashboard{
+  padding:20px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:20px;
+}
+
+.card{
+  background:rgba(255,255,255,0.05);
+  padding:15px;border-radius:12px
+}
+
+.balance{background:linear-gradient(135deg,#FFD700,#FF8C00);color:#000;font-weight:bold}
+
+.actions a{
+  display:block;margin-top:8px;color:#FFD700;text-decoration:none
+}
+
+input{
+  width:100%;padding:8px;margin-top:10px;border-radius:6px;border:none
+}
+
+table{width:100%;border-collapse:collapse}
+th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,.2)}
+
+button{
+  margin-top:10px;padding:8px;border:none;border-radius:6px;
+  background:#FFD700;font-weight:bold;cursor:pointer
+}
+
+.light{background:#f5f5f5;color:#000}
+.light .card{background:#fff;color:#000}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🏦 Jithu Bank</h1>
+  <nav>
+    <a href="/deposit">Deposit</a>
+    <a href="/withdraw">Withdraw</a>
+    <a href="/transfer">Transfer</a>
+    <a href="/transactions">Transactions</a>
+    <a href="/logout">Logout</a>
+  </nav>
+  <div>
+    <button onclick="toggleTheme()">🌗</button>
+  </div>
+</header>
+
+<div class="dashboard">
+
+<!-- Balance -->
+<div class="card balance">
+  Balance: ₹{{ "%.2f"|format(user.balance) }}
+</div>
+
+<!-- Income -->
+<div class="card">
+  <h3>💰 Total Income</h3>
+  ₹{{ "%.2f"|format(income) }}
+</div>
+
+<!-- Expense -->
+<div class="card">
+  <h3>💸 Total Expense</h3>
+  ₹{{ "%.2f"|format(expense) }}
+</div>
+
+<!-- Profile -->
+<div class="card">
+  <h3>👤 Profile</h3>
+  <p>{{ user.username }}</p>
+  <p>{{ user.email }}</p>
+</div>
+
+<!-- Quick Actions -->
+<div class="card actions">
+  <h3>⚡ Quick Actions</h3>
+  <a href="/deposit">➕ Deposit</a>
+  <a href="/withdraw">➖ Withdraw</a>
+  <a href="/transfer">🔁 Transfer</a>
+</div>
+
+<!-- Chart -->
+<div class="card">
+  <h3>📊 Income vs Expense</h3>
+  <canvas id="chart"></canvas>
+  <button onclick="loadChart()">Refresh</button>
+</div>
+
+<!-- Search -->
+<div class="card">
+  <h3>🔍 Search Transactions</h3>
+  <input onkeyup="searchTx(this.value)" placeholder="Search...">
+</div>
+
+<!-- Transactions -->
+<div class="card" style="grid-column:1/-1">
+  <h3>📜 Recent Transactions</h3>
+
+  {% if txns %}
+  <table id="txTable">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Type</th>
+        <th>Amount</th>
+        <th>Balance</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for txn in txns %}
+      <tr>
+        <td>{{ txn.created_at.strftime('%d-%m-%Y %H:%M') }}</td>
+        <td>{{ txn.type }}</td>
+        <td>₹{{ txn.amount }}</td>
+        <td>₹{{ txn.balance_after }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p>No transactions yet</p>
+  {% endif %}
+</div>
+
+</div>
+
+<script>
+function toggleTheme(){
+  document.body.classList.toggle("light");
+}
+
+function searchTx(v){
+  v=v.toLowerCase();
+  document.querySelectorAll("#txTable tbody tr").forEach(r=>{
+    r.style.display=r.innerText.toLowerCase().includes(v)?"":"none";
+  });
+}
+
+function loadChart(){
+  fetch("/api/dashboard-stats")
+  .then(res=>res.json())
+  .then(data=>{
+    new Chart(document.getElementById("chart"),{
+      type:"bar",
+      data:{
+        labels:["Income","Expense"],
+        datasets:[{
+          label:"Amount",
+          data:[data.income,data.expense]
+        }]
+      }
+    });
+  });
+}
+
+loadChart();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Withdraw - Jithu Bank</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,Arial,sans-serif}
+
+body{
+  background:#0c0f1d;
+  color:#fff;
+}
+
+/* Header */
+header{
+  background:#000;
+  padding:15px 30px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+header h1{color:#FFD700}
+
+nav a{
+  margin-right:15px;
+  color:#FFD700;
+  text-decoration:none;
+  font-weight:600;
+}
+
+/* Wrapper */
+.wrapper{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:90vh;
+}
+
+/* Container */
+.container{
+  background:rgba(255,255,255,0.05);
+  padding:30px;
+  border-radius:12px;
+  width:400px;
+  text-align:center;
+}
+
+h2{
+  color:#FFD700;
+  margin-bottom:10px;
+}
+
+/* Inputs */
+input{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  border:none;
+  border-radius:6px;
+}
+
+/* Button */
+button{
+  width:100%;
+  margin-top:15px;
+  padding:10px;
+  border:none;
+  border-radius:6px;
+  background:#FFD700;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+/* Alerts */
+.alert{
+  margin-top:10px;
+  padding:10px;
+  border-radius:6px;
+}
+
+.alert.success{
+  background:rgba(0,255,0,0.2);
+  color:#0f0;
+}
+
+.alert.danger{
+  background:rgba(255,0,0,0.2);
+  color:#f00;
+}
+
+/* Links */
+.links a{
+  display:block;
+  margin-top:10px;
+  color:#FFD700;
+  text-decoration:none;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🏦 Jithu Bank</h1>
+  <nav>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/deposit">Deposit</a>
+    <a href="/transfer">Transfer</a>
+    <a href="/transactions">Transactions</a>
+    <a href="/logout">Logout</a>
+  </nav>
+</header>
+
+<div class="wrapper">
+<div class="container">
+
+  <h2>💸 Withdraw Money</h2>
+
+  <p>
+    Welcome, <strong>{{ user.username }}</strong><br>
+    Balance: ₹{{ "%.2f"|format(user.balance) }}
+  </p>
+
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert {{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <!-- Form -->
+  <form method="POST" action="/withdraw">
+
+    <input type="number" name="amount"
+           placeholder="Enter amount" min="1" required>
+
+    <input type="password" name="pin"
+           placeholder="Enter PIN" required>
+
+    <button type="submit">Withdraw</button>
+
+  </form>
+
+  <div class="links">
+    <a href="/dashboard">⬅ Back to Dashboard</a>
+    <a href="/transactions">💰 View Transactions</a>
+  </div>
+
+</div>
+</div>
+
+</body>
+</html>
